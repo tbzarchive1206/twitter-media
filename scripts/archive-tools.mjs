@@ -15,9 +15,9 @@ const memberRules = [
   ["Q", /(창민|큐|changmin|\bq\b)/iu],
   ["Sunwoo", /(선우|sunwoo)/iu],
   ["Eric", /(에릭|eric)/iu],
-  ["Hwall (2017 - 2019)", /(활|hwall)/iu],
-  ["Haknyeon (2017 - 2025)", /(학년|haknyeon)/iu],
-  ["New (2017 - 2026)", /(찬희|뉴|chanhee|\bNEW\b)/u],
+  ["Hwall", /(활|hwall)/iu],
+  ["Haknyeon", /(학년|haknyeon)/iu],
+  ["New", /(찬희|뉴|chanhee|\bnew\b)/iu],
 ];
 
 function dateCode(value, fallback = "") {

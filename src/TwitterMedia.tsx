@@ -10,7 +10,15 @@ const fileUrl = (id: string) => `https://drive.google.com/file/d/${encodeURIComp
 const downloadUrl = (id: string) => `https://drive.google.com/uc?export=download&id=${encodeURIComponent(id)}`;
 const previewUrl = (id: string) => `https://drive.google.com/file/d/${encodeURIComponent(id)}/preview`;
 const dateLabel = (date: number) => String(date).slice(2);
-const memberMatches = (members: string[], selected: string) => members.some((member) => member === selected || member.replace(/\s*\(.*/, "") === selected);
+const memberMatches = (item: Media, selected: string) => {
+  const tagged = item.members.some((member) => member === selected || member.replace(/\s*\(.*/, "") === selected);
+  if (tagged) return true;
+  const filename = item.name;
+  if (selected === "Hwall") return /\bhwall\b/iu.test(filename);
+  if (selected === "Haknyeon") return /\bhaknyeon\b/iu.test(filename);
+  if (selected === "New") return /\b(new|chanhee)\b/iu.test(filename);
+  return false;
+};
 
 function Tile({ item, onOpen }: { item: Media; onOpen: (item: Media) => void }) {
   return <article className="media-card">
@@ -35,7 +43,7 @@ export function TwitterMedia({ data }: { data: Archive }) {
     const search = query.trim().toLocaleLowerCase();
     return data.media.filter((item) => account === "all" || item.account === account)
       .filter((item) => year === "all" || item.year === Number(year))
-      .filter((item) => selectedMembers.every((selected) => memberMatches(item.members, selected)))
+      .filter((item) => selectedMembers.every((selected) => memberMatches(item, selected)))
       .filter((item) => !search || [item.name, item.account, ...item.members, String(item.date)].join(" ").toLocaleLowerCase().includes(search))
       .sort((a, b) => sort === "newest" ? b.date - a.date : a.date - b.date);
   }, [account, data, query, selectedMembers, sort, year]);
