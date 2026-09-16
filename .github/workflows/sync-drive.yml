@@ -1,0 +1,29 @@
+name: Sync Twitter Media
+
+on:
+  schedule:
+    - cron: "17 5,17 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node scripts/sync-drive.mjs
+        env:
+          GOOGLE_DRIVE_API_KEY: ${{ secrets.GOOGLE_DRIVE_API_KEY }}
+      - name: Commit changed archive index
+        run: |
+          if git diff --quiet -- app/data/archive.generated.json; then exit 0; fi
+          git config user.name "twitter-media-bot"
+          git config user.email "twitter-media-bot@users.noreply.github.com"
+          git add app/data/archive.generated.json
+          git commit -m "chore: sync Twitter Media archive"
+          git push
